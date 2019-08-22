@@ -1,41 +1,18 @@
-staging_events_table_drop_sql = "DROP TABLE IF EXISTS staging_events"
-staging_songs_table_drop_sql = "DROP TABLE IF EXISTS staging_songs"
-CREATE_STAGING_EVENTS_TABLE_SQL = """
-CREATE TABLE IF NOT EXISTS staging_events (
-staging_events_key INTEGER IDENTITY(0,1),
-artist             VARCHAR(MAX),            
-auth               VARCHAR(MAX),
-firstName          VARCHAR(MAX),
-gender             VARCHAR(MAX),
-itemInSession      INTEGER,
-lastName           VARCHAR(MAX),
-length             DOUBLE PRECISION,
-level              VARCHAR(MAX),
-location           VARCHAR(MAX),
-method             VARCHAR(MAX),
-page               VARCHAR(MAX),
-registration       DECIMAL(15,1),
-sessionId          INTEGER,      
-song               VARCHAR(MAX),
-status             INTEGER,
-ts                 TIMESTAMP,
-userAgent          VARCHAR(MAX),
-userId             INTEGER distkey
-);
-"""
+staging_transactions_table_drop_sql = "DROP TABLE IF EXISTS staging_transactions"
 
-CREATE_STAGING_SONGS_TABLE_SQL = """
-CREATE TABLE IF NOT EXISTS staging_songs (
-staging_songs_key INTEGER IDENTITY(0,1),
-song_id           VARCHAR(MAX),            
-artist_id         VARCHAR(MAX) distkey,
-num_songs         INTEGER,
-artist_latitude   REAL,
-artist_longitude  REAL,
-artist_location   VARCHAR(MAX),
-artist_name       VARCHAR(MAX),
-title             VARCHAR(MAX),      
-duration          REAL,
-year              INTEGER
+CREATE_STAGING_TRANSACTIONS_TABLE_SQL = """
+CREATE TABLE IF NOT EXISTS staging_transactions (
+staging_transactions_key INTEGER IDENTITY(0,1),
+step                    INTEGER,            
+tansaction_type         VARCHAR(MAX) distkey,
+transaction_amount      DOUBLE PRECISION,
+originator_name         VARCHAR(MAX),
+originator_old_balance  DOUBLE PRECISION,
+originator_new_balance  DOUBLE PRECISION,
+recepient_name          VARCHAR(MAX),
+recepient_old_balance   DOUBLE PRECISION,
+recepient_new_balance   DOUBLE PRECISION,
+isFraud                 INTEGER,
+isFlaggedFraud          INTEGER
 );
 """
