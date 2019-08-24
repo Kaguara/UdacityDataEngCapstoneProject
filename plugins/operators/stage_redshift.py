@@ -11,19 +11,22 @@ class StageToRedshiftOperator(BaseOperator):
         FROM '{}'
         ACCESS_KEY_ID '{}'
         SECRET_ACCESS_KEY '{}'
-        iam_role 'arn:aws:iam::968940811236:role/dwhRole' 
+        IGNOREHEADER {}
+        DELIMITER '{}'; 
     """
+
+    #iam_role 'arn:aws:iam::968940811236:role/dwhRole'
 
     @apply_defaults
     def __init__(self,
                  # Define your operators params (with defaults) here
-                 # Example:
-                 # redshift_conn_id=your-connection-name
                  redshift_conn_id="",
                  aws_credentials_id="",
                  table="",
                  s3_bucket="",
                  s3_key="",
+                 ignore_headers=1,
+                 delimiter=",",
                  *args, **kwargs):
 
         super(StageToRedshiftOperator, self).__init__(*args, **kwargs)
@@ -33,6 +36,8 @@ class StageToRedshiftOperator(BaseOperator):
         self.s3_bucket = s3_bucket
         self.s3_key = s3_key
         self.aws_credentials_id = aws_credentials_id
+        self.ignore_headers = ignore_headers
+        self.delimiter = delimiter
 
     def execute(self, context):
         self.log.info('StageToRedshiftOperator not implemented yet')
@@ -40,7 +45,7 @@ class StageToRedshiftOperator(BaseOperator):
         credentials = aws_hook.get_credentials()
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
         
-        #self.log.info("Clearing data from destination Redshift table")
+        self.log.info("Clearing data from destination Redshift table")
         redshift.run("DELETE FROM {}".format(self.table))
         
         self.log.info("Copying data from S3 to Redshift")
@@ -52,7 +57,9 @@ class StageToRedshiftOperator(BaseOperator):
             self.table,
             s3_path,
             credentials.access_key,
-            credentials.secret_key
+            credentials.secret_key,
+            self.ignore_headers,
+            self.delimiter
         )
         redshift.run(formatted_sql)
         

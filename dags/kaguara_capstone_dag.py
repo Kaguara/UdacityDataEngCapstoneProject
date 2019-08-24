@@ -53,7 +53,8 @@ stage_transactions_to_redshift = StageToRedshiftOperator(
     table="staging_transactions",
     s3_bucket="udacity-capstone-kaguara-source-bucket",
     s3_key="PS_20174392719_1491204439457_log.csv",
-    #json="s3://udacity-dend/log_json_path.json"
+    ignore_headers=1,
+    delimiter=","
 )
 
 #run_quality_checks = DataQualityOperator(
