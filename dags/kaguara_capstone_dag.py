@@ -34,6 +34,20 @@ delete_staging_transactions_table = PostgresOperator(
     postgres_conn_id="redshift"
 )
 
+delete_merchants_table = PostgresOperator(
+    task_id="delete_merchants_table",
+    dag=dag,
+    sql=sql_statements.merchants_table_drop_sql,
+    postgres_conn_id="redshift"
+)
+
+delete_customers_table = PostgresOperator(
+    task_id="delete_customers_table",
+    dag=dag,
+    sql=sql_statements.customers_table_drop_sql,
+    postgres_conn_id="redshift"
+)
+
 ################ END DELETE TABLES OPERATORS ###############
 
 ################ START CREATE TABLES OPERATORS ###############
@@ -41,6 +55,20 @@ create_staging_transactions_table = PostgresOperator(
     task_id="create_staging_transactions_table",
     dag=dag,
     sql=sql_statements.CREATE_STAGING_TRANSACTIONS_TABLE_SQL,
+    postgres_conn_id="redshift"
+)
+
+create_merchants_table = PostgresOperator(
+    task_id="create_merchants_table",
+    dag=dag,
+    sql=sql_statements.CREATE_MERCHANTS_TABLE_SQL,
+    postgres_conn_id="redshift"
+)
+
+create_customers_table = PostgresOperator(
+    task_id="create_customers_table",
+    dag=dag,
+    sql=sql_statements.CREATE_CUSTOMERS_TABLE_SQL,
     postgres_conn_id="redshift"
 )
 ################ END CREATE TABLES OPERATORS ###############
@@ -65,10 +93,16 @@ stage_transactions_to_redshift = StageToRedshiftOperator(
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
 
 start_operator >> delete_staging_transactions_table
-start_operator >> delete_staging_transactions_table
+start_operator >> delete_merchants_table
+start_operator >> delete_customers_table
 
 delete_staging_transactions_table >> create_staging_transactions_table
+delete_merchants_table >> create_merchants_table
+delete_customers_table >> create_customers_table
+
 create_staging_transactions_table >> stage_transactions_to_redshift
+create_merchants_table >> stage_transactions_to_redshift
+create_customers_table >> stage_transactions_to_redshift
 
 stage_transactions_to_redshift >> end_operator
 

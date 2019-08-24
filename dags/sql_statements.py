@@ -1,4 +1,6 @@
 staging_transactions_table_drop_sql = "DROP TABLE IF EXISTS staging_transactions"
+merchants_table_drop_sql = "DROP TABLE IF EXISTS merchants"
+customers_table_drop_sql = "DROP TABLE IF EXISTS customers"
 
 CREATE_STAGING_TRANSACTIONS_TABLE_SQL = """
 CREATE TABLE IF NOT EXISTS staging_transactions (
@@ -17,7 +19,7 @@ isFlaggedFraud          INTEGER
 );
 """
 
-CREATE_MERCHANTS_TABLE == """
+CREATE_MERCHANTS_TABLE_SQL = """
 CREATE TABLE IF NOT EXISTS merchants (
 merchant_key INTEGER IDENTITY(0,1),
 merchant_name    VARCHAR(MAX),
@@ -28,7 +30,7 @@ top_customer     VARCHAR(MAX)
 );
 """
 
-CREATE_CUSTOMERS_TABLE == """
+CREATE_CUSTOMERS_TABLE_SQL = """
 CREATE TABLE IF NOT EXISTS customers (
 customer_key                INTEGER IDENTITY(0,1),
 customer_name               VARCHAR(MAX),
