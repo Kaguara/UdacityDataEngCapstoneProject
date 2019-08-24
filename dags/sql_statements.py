@@ -16,3 +16,29 @@ isFraud                 INTEGER,
 isFlaggedFraud          INTEGER
 );
 """
+
+CREATE_MERCHANTS_TABLE == """
+CREATE TABLE IF NOT EXISTS merchants (
+merchant_key INTEGER IDENTITY(0,1),
+merchant_name    VARCHAR(MAX),
+cash_in_count    INTEGER,
+cash_out_count   INTEGER,
+payment_count    INTEGER,
+top_customer     VARCHAR(MAX)
+);
+"""
+
+CREATE_CUSTOMERS_TABLE == """
+CREATE TABLE IF NOT EXISTS customers (
+customer_key                INTEGER IDENTITY(0,1),
+customer_name               VARCHAR(MAX),
+cash_in_count               INTEGER,
+cash_out_count              INTEGER,
+payment_count               INTEGER,
+transfer_count              INTEGER,
+first_transaction_step_time INTEGER,
+last_transaction_step_time  INTEGER,
+top_transfer_to_customer    VARCHAR(MAX),
+top_merchant				VARCHAR(MAX)
+);
+"""
