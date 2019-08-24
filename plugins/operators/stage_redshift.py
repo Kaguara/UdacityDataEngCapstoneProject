@@ -12,9 +12,7 @@ class StageToRedshiftOperator(BaseOperator):
         ACCESS_KEY_ID '{}'
         SECRET_ACCESS_KEY '{}'
         IGNOREHEADER {}
-        DELIMITER '{}'
         iam_role 'arn:aws:iam::968940811236:role/dwhRole' 
-        json '{}'
         TIMEFORMAT as 'epochmillisecs'
     """
 
@@ -28,7 +26,6 @@ class StageToRedshiftOperator(BaseOperator):
                  table="",
                  s3_bucket="",
                  s3_key="",
-                 delimiter=",", #ToDo: confirm this is true for the song data file in S3
                  ignore_headers=1,
                  *args, **kwargs):
 
@@ -38,7 +35,6 @@ class StageToRedshiftOperator(BaseOperator):
         self.redshift_conn_id = redshift_conn_id
         self.s3_bucket = s3_bucket
         self.s3_key = s3_key
-        self.delimiter = delimiter
         self.ignore_headers = ignore_headers
         self.aws_credentials_id = aws_credentials_id
 
@@ -52,6 +48,8 @@ class StageToRedshiftOperator(BaseOperator):
         redshift.run("DELETE FROM {}".format(self.table))
         
         self.log.info("Copying data from S3 to Redshift")
+        
+        #rendered key was used in the example project
         rendered_key = self.s3_key.format(**context)
         s3_path = "s3://{}/{}".format(self.s3_bucket, rendered_key)
         formatted_sql = StageToRedshiftOperator.copy_sql.format(
@@ -59,8 +57,7 @@ class StageToRedshiftOperator(BaseOperator):
             s3_path,
             credentials.access_key,
             credentials.secret_key,
-            self.ignore_headers,
-            self.delimiter
+            self.ignore_headers
         )
         redshift.run(formatted_sql)
         
