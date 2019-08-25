@@ -85,6 +85,24 @@ stage_transactions_to_redshift = StageToRedshiftOperator(
     delimiter=","
 )
 
+load_merchants_dimension_table = LoadDimensionOperator(
+    task_id='load_merchants_dim_table',
+    dag=dag,
+    redshift_conn_id="redshift",
+    aws_credentials_id="aws_credentials",
+    table="merchants",
+    insert_query = sql_statements.INSERT_INTO_MERCHANTS_TABLE_SQL
+)
+
+load_customers_dimension_table = LoadDimensionOperator(
+    task_id='load_customers_dim_table',
+    dag=dag,
+    redshift_conn_id="redshift",
+    aws_credentials_id="aws_credentials",
+    table="merchants",
+    insert_query = sql_statements.INSERT_INTO_CUSTOMERS_TABLE_SQL
+)
+
 #run_quality_checks = DataQualityOperator(
 #    task_id='Run_data_quality_checks',
 #    dag=dag
@@ -104,7 +122,12 @@ create_staging_transactions_table >> stage_transactions_to_redshift
 create_merchants_table >> stage_transactions_to_redshift
 create_customers_table >> stage_transactions_to_redshift
 
-stage_transactions_to_redshift >> end_operator
+
+stage_transactions_to_redshift >> load_merchants_dimension_table
+
+load_merchants_dimension_table >> load_customers_dimension_table
+
+load_customers_dimension_table >> end_operator
 
 
 #run_quality_checks >> end_operator

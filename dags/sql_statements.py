@@ -21,27 +21,27 @@ isFlaggedFraud          INTEGER
 
 CREATE_MERCHANTS_TABLE_SQL = """
 CREATE TABLE IF NOT EXISTS merchants (
-merchant_key INTEGER IDENTITY(0,1),
-merchant_name    VARCHAR(MAX),
-cash_in_count    INTEGER,
-cash_out_count   INTEGER,
-payment_count    INTEGER,
-top_customer     VARCHAR(MAX)
+merchant_key                 INTEGER IDENTITY(0,1),
+merchant_name                VARCHAR(MAX),
+cash_in_count                INTEGER,
+cash_out_count               INTEGER,
+payment_count                INTEGER,
+distinct_customers_count     INTEGER
 );
 """
 
 CREATE_CUSTOMERS_TABLE_SQL = """
 CREATE TABLE IF NOT EXISTS customers (
-customer_key                INTEGER IDENTITY(0,1),
-customer_name               VARCHAR(MAX),
-cash_in_count               INTEGER,
-cash_out_count              INTEGER,
-payment_count               INTEGER,
-transfer_count              INTEGER,
-first_transaction_step_time INTEGER,
-last_transaction_step_time  INTEGER,
-top_transfer_to_customer    VARCHAR(MAX),
-top_merchant				VARCHAR(MAX)
+customer_key                               INTEGER IDENTITY(0,1),
+customer_name                              VARCHAR(MAX),
+cash_in_count                              INTEGER,
+cash_out_count                             INTEGER,
+payment_count                              INTEGER,
+transfer_count                             INTEGER,
+first_transaction_step_time                INTEGER,
+last_transaction_step_time                 INTEGER,
+distinct_top_transfer_to_customer_count    VARCHAR(MAX),
+distinct_merchant_count				       VARCHAR(MAX)
 );
 """
 
@@ -51,8 +51,23 @@ SELECT distinct st.recepient_name,
 	sum(case when st.transaction_type = 'CASH-IN' then st.transaction_amount else 0 end),
 	sum(case when st.transaction_type = 'CASH-OUT' then st.transaction_amount else 0 end), 
 	sum(case when st.transaction_type = 'PAYMENT' then st.transaction_amount else 0 end),
-	<...>
+	count(distinct st.originator_name)
 FROM staging_transactions st
 WHERE st.recepient_name like 'M%'
-GROUP BY st.recepient_name;
+GROUP BY st.recepient_name, st.originator_name;
+"""
+
+INSERT_INTO_CUSTOMERS_TABLE_SQL = """
+INSERT INTO customers (customer_name, cash_in_count, cash_out_count, payment_count, transfer_count, first_transaction_step_time , last_transaction_step_time, distinct_top_transfer_to_customer_count, distinct_merchant_count) 
+SELECT distinct st.recepient_name, 
+	sum(case when st.transaction_type = 'CASH-IN' then st.transaction_amount else 0 end),
+	sum(case when st.transaction_type = 'CASH-OUT' then st.transaction_amount else 0 end), 
+	sum(case when st.transaction_type = 'PAYMENT' then st.transaction_amount else 0 end),
+	sum(case when st.transaction_type = 'TRANSFER' then st.transaction_amount else 0 end),
+	min(st.step),
+	max(st.step),
+	count(case when st.transaction_type = 'TRANSFER' then distinct st.recepient_name else 0 end),
+	count(case when st.recepient_name like 'M%' then distinct st.recepient_name else 0 end)
+FROM staging_transactions st
+GROUP BY st.recepient_name, st.originator_name;
 """
