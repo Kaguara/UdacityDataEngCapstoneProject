@@ -54,6 +54,5 @@ SELECT distinct st.recepient_name,
 	<...>
 FROM staging_transactions st
 WHERE st.recepient_name like 'M%'
-GROUP BY st.recepient_name
-AND rnk = 1;
+GROUP BY st.recepient_name;
 """
