@@ -40,8 +40,8 @@ payment_count                              INTEGER,
 transfer_count                             INTEGER,
 first_transaction_step_time                INTEGER,
 last_transaction_step_time                 INTEGER,
-distinct_top_transfer_to_customer_count    VARCHAR(MAX),
-distinct_merchant_count				       VARCHAR(MAX)
+distinct_top_transfer_to_customer_count    INTEGER,
+distinct_merchant_count				       INTEGER
 );
 """
 
