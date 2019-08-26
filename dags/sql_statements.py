@@ -64,10 +64,10 @@ SELECT distinct st.recepient_name,
 	sum(case when st.transaction_type = 'CASH-OUT' then st.transaction_amount else 0 end), 
 	sum(case when st.transaction_type = 'PAYMENT' then st.transaction_amount else 0 end),
 	sum(case when st.transaction_type = 'TRANSFER' then st.transaction_amount else 0 end),
-	min(st.step),
-	max(st.step),
-	count(case when st.transaction_type = 'TRANSFER' then distinct st.recepient_name else 0 end),
-	count(case when st.recepient_name like 'M%' then distinct st.recepient_name else 0 end)
+	min(st.step) as min_step_time,
+	max(st.step) as max_step_time,
+	count(case when st.transaction_type = 'TRANSFER' then st.recepient_name else '' end),
+	count(case when st.recepient_name like 'M%' then st.recepient_name else '' end)
 FROM staging_transactions st
 GROUP BY st.recepient_name, st.originator_name;
 """
