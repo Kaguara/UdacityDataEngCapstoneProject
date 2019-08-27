@@ -46,7 +46,7 @@ distinct_merchant_count				       INTEGER
 """
 
 INSERT_INTO_MERCHANTS_TABLE_SQL = """
-INSERT INTO merchants (merchant_name, cash_in_count, cash_out_count, payment_count, top_customer) 
+INSERT INTO merchants (merchant_name, cash_in_count, cash_out_count, payment_count, distinct_customers_count) 
 SELECT distinct st.recepient_name, 
 	sum(case when st.transaction_type = 'CASH-IN' then st.transaction_amount else 0 end),
 	sum(case when st.transaction_type = 'CASH-OUT' then st.transaction_amount else 0 end), 
