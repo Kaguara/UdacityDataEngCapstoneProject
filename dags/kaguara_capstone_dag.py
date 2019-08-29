@@ -103,9 +103,13 @@ load_customers_dimension_table = LoadDimensionOperator(
     insert_query = sql_statements.INSERT_INTO_CUSTOMERS_TABLE_SQL
 )
 
-#run_quality_checks = DataQualityOperator(
-#    task_id='Run_data_quality_checks',
-#    dag=dag
+run_quality_checks = DataQualityOperator(
+    task_id='Run_data_quality_checks',
+    dag=dag,
+    redshift_conn_id="redshift",
+    aws_credentials_id="aws_credentials",
+    users_table="customers",
+    test_query_1 = "select count(*) from customers;"
 #)
 
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
@@ -127,7 +131,7 @@ stage_transactions_to_redshift >> load_merchants_dimension_table
 
 load_merchants_dimension_table >> load_customers_dimension_table
 
-load_customers_dimension_table >> end_operator
+load_customers_dimension_table >> load_customers_dimension_table
 
 
-#run_quality_checks >> end_operator
+run_quality_checks >> end_operator
