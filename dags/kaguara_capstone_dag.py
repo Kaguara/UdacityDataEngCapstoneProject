@@ -3,7 +3,7 @@ import os
 from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.postgres_operator import PostgresOperator
-from airflow.operators import (StageToRedshiftOperator, LoadFactOperator,
+from airflow.operators import (StageToRedshiftOperator, StageToRedshiftJSONOperator, LoadFactOperator,
                                 LoadDimensionOperator, DataQualityOperator)
 from helpers import SqlQueries
 import sql_statements
@@ -13,8 +13,14 @@ AWS_SECRET = os.environ.get('AWS_SECRET')
 
 default_args = {
     'owner': 'kaguara',
-    #'start_date': datetime(2019, 1, 12),
-    'start_date': datetime(2019, 3, 8),
+    'start_date': datetime(2019, 1, 12),
+    'depends_on_past': False,
+    'email': ['akaguara@gmail.com.com'],
+    'email_on_failure': False,
+    'email_on_retry': False,
+    'retries': 3,
+    'retry_delay': timedelta(minutes=30),
+    'queue': 'default',
 }
 
 dag = DAG('kaguara_capstone_dag',
@@ -45,6 +51,13 @@ delete_customers_table = PostgresOperator(
     task_id="delete_customers_table",
     dag=dag,
     sql=sql_statements.customers_table_drop_sql,
+    postgres_conn_id="redshift"
+)
+
+delete_customers_table = PostgresOperator(
+    task_id="delete_world_bank_stats_table",
+    dag=dag,
+    sql=sql_statements.world_bank_stats_table_drop_sql,
     postgres_conn_id="redshift"
 )
 
@@ -81,6 +94,18 @@ stage_transactions_to_redshift = StageToRedshiftOperator(
     table="staging_transactions",
     s3_bucket="udacity-capstone-kaguara-source-bucket",
     s3_key="PS_20174392719_1491204439457_log.csv",
+    ignore_headers=1,
+    delimiter=","
+)
+
+stage_world_bank_stats_to_redshift = StageToRedshiftJSONOperator(
+    task_id='stage_world_bank_stats',
+    dag=dag,
+    redshift_conn_id="redshift",
+    aws_credentials_id="aws_credentials",
+    table="world_bank_stats",
+    s3_bucket="udacity-capstone-kaguara-source-bucket",
+    s3_key="Global_Findex_Database.json",
     ignore_headers=1,
     delimiter=","
 )
