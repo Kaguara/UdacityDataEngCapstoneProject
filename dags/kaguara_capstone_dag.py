@@ -3,8 +3,8 @@ import os
 from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.postgres_operator import PostgresOperator
-from airflow.operators import (StageToRedshiftOperator, StageToRedshiftJSONOperator, LoadFactOperator,
-                                LoadDimensionOperator, DataQualityOperator)
+from airflow.operators import (StageToRedshiftOperator, LoadFactOperator, LoadDimensionOperator, 
+    DataQualityOperator, StageToRedshiftJSONOperator)
 from helpers import SqlQueries
 import sql_statements
 
@@ -54,7 +54,7 @@ delete_customers_table = PostgresOperator(
     postgres_conn_id="redshift"
 )
 
-delete_customers_table = PostgresOperator(
+delete_world_bank_stats_table = PostgresOperator(
     task_id="delete_world_bank_stats_table",
     dag=dag,
     sql=sql_statements.world_bank_stats_table_drop_sql,
@@ -82,6 +82,13 @@ create_customers_table = PostgresOperator(
     task_id="create_customers_table",
     dag=dag,
     sql=sql_statements.CREATE_CUSTOMERS_TABLE_SQL,
+    postgres_conn_id="redshift"
+)
+
+create_world_bank_stats_table = PostgresOperator(
+    task_id="create_world_bank_stats_table",
+    dag=dag,
+    sql=sql_statements.CREATE_WORLD_BANK_STATS_TABLE_SQL,
     postgres_conn_id="redshift"
 )
 ################ END CREATE TABLES OPERATORS ###############
@@ -135,28 +142,32 @@ run_quality_checks = DataQualityOperator(
     aws_credentials_id="aws_credentials",
     users_table="customers",
     test_query_1 = "select count(*) from customers;"
-#)
+)
 
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
 
 start_operator >> delete_staging_transactions_table
 start_operator >> delete_merchants_table
 start_operator >> delete_customers_table
+start_operator >> delete_world_bank_stats_table
 
 delete_staging_transactions_table >> create_staging_transactions_table
 delete_merchants_table >> create_merchants_table
 delete_customers_table >> create_customers_table
+delete_world_bank_stats_table >> create_world_bank_stats_table
 
 create_staging_transactions_table >> stage_transactions_to_redshift
+create_world_bank_stats_table >> stage_transactions_to_redshift
 create_merchants_table >> stage_transactions_to_redshift
 create_customers_table >> stage_transactions_to_redshift
 
 
-stage_transactions_to_redshift >> load_merchants_dimension_table
+stage_transactions_to_redshift >> stage_world_bank_stats_to_redshift
+stage_world_bank_stats_to_redshift >> load_merchants_dimension_table
 
 load_merchants_dimension_table >> load_customers_dimension_table
 
-load_customers_dimension_table >> load_customers_dimension_table
+load_customers_dimension_table >> run_quality_checks
 
 
 run_quality_checks >> end_operator

@@ -33,8 +33,8 @@ class DataQualityOperator(BaseOperator):
         #running a test that the users table has more than 0 records
         records = redshift.get_records(self.test_query_1)
         if len(records) < 1 or len(records[0]) < 1:
-            raise ValueError(f"Data quality check failed. {self.users_table} returned no results")
+            raise ValueError("Data quality check failed. Customers table returned no results")
         num_records = records[0][0]
         if num_records < 1:
-            raise ValueError(f"Data quality check failed. {self.users_table} contained 0 rows")
-        self.log.info(f"Data quality on table {self.users_table} check passed with {records[0][0]}")
+            raise ValueError("Data quality check failed. Customers table contained 0 rows")
+        self.log.info("Data quality on table Customers check passed")

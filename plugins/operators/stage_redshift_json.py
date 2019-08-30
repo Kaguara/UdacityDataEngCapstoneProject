@@ -4,7 +4,7 @@ from airflow.contrib.hooks.aws_hook import AwsHook
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 
-class StageToRedshiftOperator(BaseOperator):
+class StageToRedshiftJSONOperator(BaseOperator):
     ui_color = '#358140'
     
     copy_sql = """
@@ -31,7 +31,7 @@ class StageToRedshiftOperator(BaseOperator):
                  delimiter=",",
                  *args, **kwargs):
 
-        super(StageToRedshiftOperator, self).__init__(*args, **kwargs)
+        super(StageToRedshiftJSONOperator, self).__init__(*args, **kwargs)
         # Map params here
         self.table = table
         self.redshift_conn_id = redshift_conn_id
@@ -42,7 +42,7 @@ class StageToRedshiftOperator(BaseOperator):
         self.delimiter = delimiter
 
     def execute(self, context):
-        self.log.info('StageToRedshiftOperator not implemented yet')
+        self.log.info('StageToRedshiftJSONOperator not implemented yet')
         aws_hook = AwsHook(self.aws_credentials_id)
         credentials = aws_hook.get_credentials()
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
@@ -55,7 +55,7 @@ class StageToRedshiftOperator(BaseOperator):
         #rendered key was used in the example project
         rendered_key = self.s3_key.format(**context)
         s3_path = "s3://{}/{}".format(self.s3_bucket, rendered_key)
-        formatted_sql = StageToRedshiftOperator.copy_sql.format(
+        formatted_sql = StageToRedshiftJSONOperator.copy_sql.format(
             self.table,
             s3_path,
             credentials.access_key,
