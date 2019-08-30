@@ -18,8 +18,8 @@ default_args = {
     'email': ['akaguara@gmail.com.com'],
     'email_on_failure': False,
     'email_on_retry': False,
-    'retries': 3,
-    'retry_delay': timedelta(minutes=30),
+    'retries': 1,
+    'retry_delay': timedelta(seconds=30),
     'queue': 'default',
 }
 

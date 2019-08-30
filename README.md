@@ -31,7 +31,7 @@ Step 5: Tap on the admin menu option and in the drop down, select "Connections".
 5. *stage_redshift*: Redshift custom operator to copy data over from S3 to Redshift.
 
 
-## Database Design
+## Database Design & Handling Large Datasets
 Coming soon...
 
 ## ETL Pipeline
