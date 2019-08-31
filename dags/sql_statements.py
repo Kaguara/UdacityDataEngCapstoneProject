@@ -104,7 +104,7 @@ Used_the_internet_to_pay_bills_in_the_past_year_out_of_labor_force_age_15_plus		
 Used_the_internet_to_pay_bills_in_the_past_year_female_age_15_plus													VARCHAR(MAX),
 Used_the_internet_to_pay_bills_in_the_past_year_young_adults_age_15_24												VARCHAR(MAX),
 Used_the_internet_to_pay_bills_in_the_past_year_older_adults_age_25_plus											VARCHAR(MAX),
-Used_the_internet_to_pay_bills_in_the_past_year_primary_education_or_less_age_15_plua								VARCHAR(MAX),
+Used_the_internet_to_pay_bills_in_the_past_year_primary_education_or_less_age_15_plus								VARCHAR(MAX),
 Used_the_internet_to_pay_bills_in_the_past_year_secondary_education_or_more_age_15_plus								VARCHAR(MAX),
 Used_the_internet_to_pay_bills_in_the_past_year_income_poorest_40_percent_age_15_plus								VARCHAR(MAX),
 Used_the_internet_to_pay_bills_in_the_past_year_income_richest_60_percent_age_15_plus								VARCHAR(MAX),

@@ -18,7 +18,7 @@ default_args = {
     'email': ['akaguara@gmail.com.com'],
     'email_on_failure': False,
     'email_on_retry': False,
-    'retries': 1,
+    'retries': 0,
     'retry_delay': timedelta(seconds=30),
     'queue': 'default',
 }
@@ -112,9 +112,9 @@ stage_world_bank_stats_to_redshift = StageToRedshiftJSONOperator(
     aws_credentials_id="aws_credentials",
     table="world_bank_stats",
     s3_bucket="udacity-capstone-kaguara-source-bucket",
-    s3_key="Global_Findex_Database.json",
-    ignore_headers=1,
-    delimiter=","
+    s3_key="Global_Findex_Database_v2.json",
+    json_path="global_findex_db_jsonpath.json",
+    ignore_headers=1
 )
 
 load_merchants_dimension_table = LoadDimensionOperator(

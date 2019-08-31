@@ -13,11 +13,11 @@ class StageToRedshiftJSONOperator(BaseOperator):
         ACCESS_KEY_ID '{}'
         SECRET_ACCESS_KEY '{}'
         IGNOREHEADER {}
-        DELIMITER '{}'
-        FORMAT AS json; 
+        JSON '{}'; 
     """
 
     #iam_role 'arn:aws:iam::968940811236:role/dwhRole'
+    #DELIMITER '{}'
 
     @apply_defaults
     def __init__(self,
@@ -28,7 +28,7 @@ class StageToRedshiftJSONOperator(BaseOperator):
                  s3_bucket="",
                  s3_key="",
                  ignore_headers=1,
-                 delimiter=",",
+                 json_path="",
                  *args, **kwargs):
 
         super(StageToRedshiftJSONOperator, self).__init__(*args, **kwargs)
@@ -39,7 +39,7 @@ class StageToRedshiftJSONOperator(BaseOperator):
         self.s3_key = s3_key
         self.aws_credentials_id = aws_credentials_id
         self.ignore_headers = ignore_headers
-        self.delimiter = delimiter
+        self.json_path = json_path
 
     def execute(self, context):
         self.log.info('StageToRedshiftJSONOperator not implemented yet')
@@ -55,12 +55,14 @@ class StageToRedshiftJSONOperator(BaseOperator):
         #rendered key was used in the example project
         rendered_key = self.s3_key.format(**context)
         s3_path = "s3://{}/{}".format(self.s3_bucket, rendered_key)
+        rendered_jsonpath_key = self.json_path.format(**context)
+        jsonpath = "s3://{}/{}".format(self.s3_bucket, rendered_jsonpath_key)
         formatted_sql = StageToRedshiftJSONOperator.copy_sql.format(
             self.table,
             s3_path,
             credentials.access_key,
             credentials.secret_key,
             self.ignore_headers,
-            self.delimiter
+            jsonpath
         )
         redshift.run(formatted_sql)
