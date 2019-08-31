@@ -113,8 +113,7 @@ stage_world_bank_stats_to_redshift = StageToRedshiftJSONOperator(
     table="world_bank_stats",
     s3_bucket="udacity-capstone-kaguara-source-bucket",
     s3_key="Global_Findex_Database_v2.json",
-    json_path="global_findex_db_jsonpath.json",
-    ignore_headers=1
+    json_path="global_findex_db_jsonpath.json"
 )
 
 load_merchants_dimension_table = LoadDimensionOperator(

@@ -12,12 +12,12 @@ class StageToRedshiftJSONOperator(BaseOperator):
         FROM '{}'
         ACCESS_KEY_ID '{}'
         SECRET_ACCESS_KEY '{}'
-        IGNOREHEADER {}
         JSON '{}'; 
     """
 
     #iam_role 'arn:aws:iam::968940811236:role/dwhRole'
     #DELIMITER '{}'
+    #IGNOREHEADER {}
 
     @apply_defaults
     def __init__(self,
@@ -27,7 +27,6 @@ class StageToRedshiftJSONOperator(BaseOperator):
                  table="",
                  s3_bucket="",
                  s3_key="",
-                 ignore_headers=1,
                  json_path="",
                  *args, **kwargs):
 
@@ -38,7 +37,6 @@ class StageToRedshiftJSONOperator(BaseOperator):
         self.s3_bucket = s3_bucket
         self.s3_key = s3_key
         self.aws_credentials_id = aws_credentials_id
-        self.ignore_headers = ignore_headers
         self.json_path = json_path
 
     def execute(self, context):
@@ -62,7 +60,6 @@ class StageToRedshiftJSONOperator(BaseOperator):
             s3_path,
             credentials.access_key,
             credentials.secret_key,
-            self.ignore_headers,
             jsonpath
         )
         redshift.run(formatted_sql)
