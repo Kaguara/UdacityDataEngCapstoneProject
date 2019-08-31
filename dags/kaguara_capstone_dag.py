@@ -140,7 +140,9 @@ run_quality_checks = DataQualityOperator(
     redshift_conn_id="redshift",
     aws_credentials_id="aws_credentials",
     users_table="customers",
-    test_query_1 = "select count(*) from customers;"
+    world_bank_stats_table="world_bank_stats",
+    test_query_1 = "select count(*) from customers;",
+    test_query_2 = "select count(*) from world_bank_stats;"
 )
 
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
