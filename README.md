@@ -39,6 +39,10 @@ The second data source I used was a from the World Bank and represented survey r
 ### Handling Large Datasets
 In order to support 100x volume of the data, I would first consider intergating an AWS EMR cluster running Spark. This will allow me to leverage Spark's in-memory processing to speed up query and compute performance over the larger dataset. An additional I would look into a more efficient distribution key strategy that will allow me to allocate data across the diffrent workers in a manner that can increase efficiency of queries.
 
+If the pipelines would be run on a daily basis by 7 am every day, I would set the schedule_interval to '@daily'or '0 0 * * *' for the cron format, indicating the dag needs to run daily.
+
+ To enable the database for access by multiple people, I need to account for lots of concurrent read/write connections. To account for this, I would utilize AWS' Concurrency Scaling feature for Redshift. This will allow for automatic scaling of "just enough" additional clusters to handle the increased database read/write load. This will ensure extra resources are provisioned only when required, which will ultimately save on costs.
+
 ### ETL Pipeline
 The ETL pipeline is orchestrated by Airflow. The first step is creating the required tables and then reading source data files stored in S3 and using Airflow AWS operators to write the data to Redshift. I used default configurations for my project's Airflow DAG, setting retries to 0 for quick trouble-shooting, and setting retry delay to 30 seconds for the same trouble shooting reasons. In production, I would likely set the retries to a range of 1-3, depending on the complexity of the tasks, and the retry delay to some measure in minutes.
 
