@@ -22,7 +22,6 @@ Step 4: Open your browser and navigate to: "http://localhost:3000/"
 Step 5: Tap on the admin menu option and in the drop down, select "Connections". In the Connections page, enter information on your aws_credentials and a redshift connection pointing to your redshift instance in AWS.
 
 
-
 ### Explanations of files in the repository
 1. *kaguara_capstone_dag.py*: This file contains the main dag definition and instantiation of the different tasks as well as the task orchestration worflow.
 2. *sql_statements.py*: This file contains all the SQL commands required to build the tables, copy data from s3 to redshift and insert data into the dimension tables.
@@ -32,7 +31,7 @@ Step 5: Tap on the admin menu option and in the drop down, select "Connections".
 6. *stage_redshift_json*: Redshift custom operator to copy data stored in JSON format over from S3 to Redshift.
 
 
-## Database Design 
+### Database Design 
 The database was designed to make it easy to get insights on merchant and consumer behavior on the transaction network. As a result, the approach I took was to copy all the mobile money transaction data to a large staging table. This tables contains all the unique transaction records. With this table in place, I created two additional tables, merchants and customers. For each table I curated a set of features that would help me understand merchant and customer usage patterns. By taking this approach I was able to reduce the need to query the staging transactions table directly as some of the key insigts had been aggregated in the customers and merchants table.
 
 The second data source I used was a from the World Bank and represented survey responses on diffrent financial habits for consumers in emerging markets. The target markets for mobile money deployments. By collecting information form the world bank on how users consume their 
