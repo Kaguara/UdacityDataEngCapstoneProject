@@ -113,7 +113,8 @@ stage_world_bank_stats_to_redshift = StageToRedshiftJSONOperator(
     table="world_bank_stats",
     s3_bucket="udacity-capstone-kaguara-source-bucket",
     s3_key="Global_Findex_Database_v2.json",
-    json_path="global_findex_db_jsonpath.json"
+    json_path="global_findex_db_jsonpath.json",
+    ignore_headers=1
 )
 
 load_merchants_dimension_table = LoadDimensionOperator(
@@ -140,9 +141,7 @@ run_quality_checks = DataQualityOperator(
     redshift_conn_id="redshift",
     aws_credentials_id="aws_credentials",
     users_table="customers",
-    world_bank_stats_table="world_bank_stats",
-    test_query_1 = "select count(*) from customers;",
-    test_query_2 = "select count(*) from world_bank_stats;"
+    test_query_1 = "select count(*) from customers;"
 )
 
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
