@@ -46,6 +46,9 @@ If the pipelines would be run on a daily basis by 7 am every day, I would recomm
 ### ETL Pipeline
 The ETL pipeline is orchestrated by Airflow. The first step is creating the required tables and then reading source data files stored in S3 and using Airflow's AWS operators to write the data to Redshift. I used default configurations for my project's Airflow DAG, setting retries to 0 for quick trouble-shooting, and setting retry delay to 30 seconds for the same trouble shooting reasons. In production, I would likely set the retries to a range of 1-3, depending on the complexity of the tasks, and the retry delay to some measure in minutes.
 
+### Integrating third party APIs
+coming soon...
+
 ### Example Analysis Queries
 - select count(*) from customers where payment_count > 0
 - select merchant_name from merchants where distinct_customer_count>10
